@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Quiz Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background: #101827;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 25px 15px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 25px 18px;
+      border-radius: 16px;
+      max-width: 420px;
+      margin: 25px auto;
+    }
+
+    h1 {
+      color: #38bdf8;
+    }
+
+    p {
+      color: #cbd5e1;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      padding: 13px 22px;
+      border: none;
+      border-radius: 9px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 8px 3px;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .choice {
+      display: block;
+      text-align: left;
+      background: #334155;
+      padding: 13px;
+      border-radius: 8px;
+      margin: 10px 0;
+      cursor: pointer;
+    }
+
+    .choice input {
+      margin-right: 10px;
+    }
+
+    #quiz, #result {
+      display: none;
+    }
+
+    #feedback {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card" id="home">
+    <h1>My Quiz Website</h1>
+    <p>Test your knowledge with this quiz!</p>
+    <button onclick="startQuiz()">Get Started</button>
+  </div>
+
+  <div class="card" id="quiz">
+    <h1>Knowledge Test</h1>
+    <p id="progress"></p>
+    <h3 id="question"></h3>
+    <div id="choices"></div>
+    <p id="feedback"></p>
+    <button onclick="nextQuestion()" id="next">
+      Next Question
+    </button>
+  </div>
+
+  <div class="card" id="result">
+    <h1>Test Completed!</h1>
+    <h2 id="score"></h2>
+    <p id="message"></p>
+    <button onclick="startQuiz()">Try Again</button>
+    <button onclick="goHome()">Home</button>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "1. kinsa ang pinaka cute?",
+        choices: [
+          "Lance",
+          "Ervin",
+          "Anthony"
+        ],
+        answer: 1
+      },
+      {
+        q: "2. kinsa ang pinaka buutan?",
+        choices: [
+          "joram",
+          "Ervin",
+          "janby"
+        ],
+        answer: 1
+      },
+      {
+        q: "3. kinsa ang pinaka gwapo?",
+        choices: [
+          "Lance",
+          "Ervin",
+          "janby"
+        ],
+        answer: 1
+      },
+      {
+        q: "4. kinsa ang buutan og gwapo?",
+        choices: [
+          "Lance",
+          "Harley",
+          "Degamo"
+        ],
+        answer: 0
+      },
+      {
+        q: "5. kinsa ang dato?",
+        choices: [
+          "Anthony",
+          "joram",
+          "Joeven"
+        ],
+        answer: 0
+      }
+    ];
+
+    let current = 0;
+    let points = 0;
+    let answered = false;
+
+    function startQuiz() {
+      current = 0;
+      points = 0;
+
+      document.getElementById("home").style.display = "none";
+      document.getElementById("result").style.display = "none";
+      document.getElementById("quiz").style.display = "block";
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      answered = false;
+
+      const item = questions[current];
+
+      document.getElementById("progress").textContent =
+        "Question " + (current + 1) + " of " + questions.length;
+
+      document.getElementById("question").textContent = item.q;
+      document.getElementById("feedback").textContent = "";
+
+      const choices = document.getElementById("choices");
+      choices.innerHTML = "";
+
+      item.choices.forEach(function(choice, index) {
+        const label = document.createElement("label");
+        label.className = "choice";
+
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "answer";
+        radio.value = index;
+
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(choice));
+        choices.appendChild(label);
+      });
+
+      const next = document.getElementById("next");
+      next.textContent =
+        current === questions.length - 1 ? "Submit Test" : "Next Question";
+    }
+
+    function nextQuestion() {
+      if (answered) return;
+
+      const selected = document.querySelector(
+        'input[name="answer"]:checked'
+      );
+
+      if (!selected) {
+        document.getElementById("feedback").textContent =
+          "Please choose an answer first!";
+        return;
+      }
+
+      answered = true;
+
+      if (Number(selected.value) === questions[current].answer) {
+        points++;
+      }
+
+      current++;
+
+      if (current < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("result").style.display = "block";
+
+      document.getElementById("score").textContent =
+        "Your Score: " + points + " / " + questions.length;
+
+      let message = "Good effort! Keep practicing.";
+
+      if (points === questions.length) {
+        message = "Chamba ang giatay";
+      } else if (points >= 3) {
+        message = "bulok";
+      }
+
+      document.getElementById("message").textContent = message;
+    }
+
+    function goHome() {
+      document.getElementById("result").style.display = "none";
+      document.getElementById("home").style.display = "block";
+    }
+  </script>
+
+</body>
+</html>
